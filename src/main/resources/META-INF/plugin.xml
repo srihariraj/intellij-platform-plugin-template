@@ -1,15 +1,41 @@
-<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>org.jetbrains.plugins.template</id>
-    <name>IntelliJ Platform Plugin Template</name>
-    <vendor>JetBrains</vendor>
+    <id>com.github.srihariraj.sinitializr4ce</id>
+    <name>S-Initializr4CE</name>
+    <version>1.0.0-init</version>
+    <vendor url="https://github.com/srihariraj">Sri Hari Raj</vendor>
 
-    <depends>com.intellij.modules.platform</depends>
+    <description><![CDATA[
+        A simple, free IntelliJ IDEA Community Edition plugin that integrates Spring Initializr for rapid Spring Boot project generation.
+    ]]></description>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
+    <idea-version since-build="241.0" until-build="261.*"/>
+
+    <depends>com.intellij.modules.java</depends>
+    <depends>org.jetbrains.plugins.gradle</depends>
+
+    <applicationListeners>
+        <listener
+                class="com.srihariraj.initializr.PluginStartupListener"
+                topic="com.intellij.openapi.startup.StartupActivity"/>
+    </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="org.jetbrains.plugins.template.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-        <postStartupActivity implementation="org.jetbrains.plugins.template.startup.MyProjectActivity" />
+        <projectWizardProvider implementation="org.jetbrains.plugins.template.services.SpringInitializrProjectWizard"/>
+        <newProjectWizard.projectGenerator
+                id="spring.initializr4ce"
+                implementation="com.sinitializr4ce.wizard.SInitializrNewProjectWizard"
+                displayName="Spring (S-Initializr4CE)"/>
     </extensions>
+
+    <action id="org.jetbrains.plugins.template.actions.BootstrapSpringAction"
+            class="org.jetbrains.plugins.template.actions.BootstrapSpringAction"
+            text="Spring Initializr: Bootstrap Project"
+            description="Initialize Spring Boot project using S-Initializr4CE">
+        <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+
+    <newProjectWizard.projectGenerator id="spring.initializr4ce"
+                                       implementation="com.sinitializr4ce.wizard.SInitializrNewProjectWizard"
+                                       displayName="Spring (S-Initializr4CE)" />
+
 </idea-plugin>
