@@ -2,8 +2,9 @@ package org.jetbrains.plugins.template.toolWindow.ui
 
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.components.JBTextField
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
-import com.yourplugin.settings.SInitializrSettings
+import org.jetbrains.plugins.template.settings.SInitializrSettings
 import javax.swing.JComponent
 
 class SInitializrSettingsPanel(
@@ -15,8 +16,10 @@ class SInitializrSettingsPanel(
     private val dependenciesField = JBTextField().apply { text = settings.dependencies }
 
     private val mainPanel = panel {
-        row("Group ID:") { cell(groupIdField).align(AlignX.FILL) }
-        row("Artifact ID:") { cell(artifactIdField).align(AlignX.FILL) }
+        row("Group ID:") { cell(groupIdField).align(
+            AlignX.FILL) }
+        row("Artifact ID:") { cell(artifactIdField).align(
+            AlignX.FILL) }
         row("Dependencies (comma-separated):") { cell(dependenciesField).align(AlignX.FILL) }
     }
 

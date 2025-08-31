@@ -16,7 +16,7 @@ repositories {
 intellij {
     version.set("2025.1.3")
     type.set("IC")
-    plugins.set(listOf("com.intellij.java", "org.jetbrains.plugins.gradle","uiDesigner"))
+    plugins.set(listOf("com.intellij.java", "org.jetbrains.plugins.gradle"))
 }
 
 

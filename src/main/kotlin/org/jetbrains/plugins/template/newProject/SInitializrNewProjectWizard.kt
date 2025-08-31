@@ -1,81 +1,59 @@
 package org.jetbrains.plugins.template.newProject
 
-import com.intellij.ide.util.projectWizard.ModuleBuilder
+import com.intellij.icons.AllIcons
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.ide.wizard.AbstractNewProjectWizardStep
 import com.intellij.ide.wizard.GeneratorNewProjectWizard
-import com.intellij.ide.wizard.NewProjectWizardLanguageStep
 import com.intellij.ide.wizard.NewProjectWizardStep
-import com.intellij.ide.wizard.LanguageNewProjectWizard
-import com.intellij.openapi.observable.properties.PropertyGraph
-import com.intellij.openapi.observable.properties.StringProperty
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.roots.ModifiableRootModel
-import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.platform.ProjectGeneratorPeer
-import com.intellij.platform.WebProjectGenerator
-import com.intellij.platform.util.newWizard.IntelliJNewProjectWizard
-import com.intellij.platform.util.newWizard.NewProjectWizardChainStep
-import com.intellij.platform.util.newWizard.generators.GeneratorNewProjectWizard
-import com.intellij.platform.util.newWizard.generators.GeneratorNewProjectWizardStep
 import org.jetbrains.plugins.template.settings.PluginSettingsState
 import org.jetbrains.plugins.template.services.SpringInitializrService
 import java.io.File
 import javax.swing.Icon
 
-class SInitializrNewProjectWizard :
-    GeneratorNewProjectWizard {
-
+class SInitializrNewProjectWizard : GeneratorNewProjectWizard {
     override val name: String = "S-Initializr4CE"
     override val id: String = "s-initializr4ce"
     override val description: String = "Generate Spring Boot project using Spring Initializr API"
-    override val icon: Icon = null // Replace with your custom plugin icon if available
+    override val icon: Icon = AllIcons.Nodes.Module
 
-    override fun createStep(
-        context: WizardContext
-    ): NewProjectWizardStep {
-        return SInitializrWizardStep(parent)
+    override fun createStep(context: WizardContext): NewProjectWizardStep {
+        return SInitializrWizardStep(parentStep = null, wizardContext = context)
     }
 }
 
-class SInitializrWizardStep(parent: NewProjectWizardStep) :
-    GeneratorNewProjectWizardStep(parent, SInitializrNewProjectWizard()),
-    NewProjectWizardStep {
-    override val context: WizardContext
-        get() = TODO(
-            "Not yet implemented"
-        )
+class SInitializrWizardStep(
+    parentStep: NewProjectWizardStep?,
+    private val wizardContext: WizardContext
+) : AbstractNewProjectWizardStep(
+    parentStep!!
+), NewProjectWizardStep {
 
-    private val propertyGraph = PropertyGraph()
-    override val keywords: NewProjectWizardStep.Keywords
-        get() = TODO(
-            "Not yet implemented"
-        )
-    override val data: UserDataHolder
-        get() = TODO(
-            "Not yet implemented"
-        )
-    private val groupId: StringProperty = propertyGraph.property("com.example")
-    private val artifactId: StringProperty = propertyGraph.property("demo")
+    private var groupId: String = "com.example"
+    private var artifactId: String = "demo"
 
     override fun setupProject(project: Project) {
         val settings = PluginSettingsState.state
-
+        val deps: List<String> = when (val d = settings.dependencies) {
+            is String -> if (d.isNotEmpty()) listOf(d) else {
+                TODO()
+            }
+            else -> (d as? List<*>)?.filterIsInstance<String>() ?: emptyList()
+        }
+        val destPath = wizardContext.projectFileDirectory
+        val destination = File(destPath)
         SpringInitializrService.generateProject(
-            groupId = groupId.get(),
-            artifactId = artifactId.get(),
+            groupId = groupId,
+            artifactId = artifactId,
             bootVersion = settings.bootVersion,
             javaVersion = settings.javaVersion,
             packaging = settings.packaging,
-            dependencies = settings.dependencies,
-            destination = File(contentRoot.path)
+            dependencies = deps,
+            destination = destination
         )
-
-        // Refresh the project directory
-        LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(contentRoot.path))?.let {
+        LocalFileSystem.getInstance().refreshAndFindFileByIoFile(destination)?.let {
             VfsUtil.markDirtyAndRefresh(true, true, true, it)
         }
     }
