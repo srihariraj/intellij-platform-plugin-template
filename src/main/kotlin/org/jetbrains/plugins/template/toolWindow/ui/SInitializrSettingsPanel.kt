@@ -45,7 +45,6 @@ class SInitializrSettingsPanel(
         settings.groupId = groupId
         settings.artifactId = artifactId
         settings.dependencies = dependencies
-
         return null
     }
 }
