@@ -19,6 +19,7 @@ class ProjectGeneratorService(private val project: Project) {
         thisLogger().info(message)
         return message
     }
+
     fun bootstrapSpringProject(): String {
         val result = "Spring Boot project setup logic goes here for ${project.name}"
         thisLogger().info(result)
