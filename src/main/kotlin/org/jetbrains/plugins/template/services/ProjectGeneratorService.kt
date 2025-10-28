@@ -20,6 +20,8 @@ class ProjectGeneratorService(private val project: Project) {
         return message
     }
 
+
+
     /**
      * Placeholder for future feature: bootstrapping project using Spring Initializr.
      */
